@@ -1,0 +1,131 @@
+Lab6:
+---------------------------Подготовка---------------------------
+00:
+getenforce
+
+01:
+sudo apt update
+sudo apt upgrade
+
+02:
+sudo apt install apache2
+vi /etc/selinux/config
+
+03:
+sudo systemctl enable apache2
+vi /etc/apache2/apache2.conf
+apache2ctl -M
+
+04:
+(sudo apt install nautilus)
+nautilus /etc/httpd 
+в httpd.conf "ServerName test.ru"
+
+05:
+iptables -F
+iptables -P INPUT ACCEPT iptables -P OUTPUT ACCEPT
+ OR
+iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+iptables -I INPUT -p tcp --dport 81 -j ACCEPT
+iptables -I OUTPUT -p tcp --sport 80 -j ACCEPT
+iptables -I OUTPUT -p tcp --sport 81 -j ACCEPT
+
+06:
+-
+
+07:
+-
+
+---------------------------Выполнение---------------------------
+01:
+sestatus
+
+02:
+service httpd status
+ OR
+/etc/rc.d/init.d/httpd status
+
+03:
+ps auxZ | grep httpd
+ OR
+ps -eZ | grep httpd
+
+04:
+sestatus -bigrep httpd
+
+05:
+seinfo
+
+06:
+ls -lZ /var/www
+
+07:
+ls -lZ /var/www/html
+
+08:
+(смотреть chmod для 07)
+
+09:
+su
+touch /var/www/html/test.html
+gedit /var/www/html/test.html
+Код:
+<html>
+	<body>test</body>
+</html>
+
+10:
+cd /var/www/html
+ls -Z
+
+11:
+сайт: http://127.0.0.1/test.html.
+
+12:
+man httpd_selinux
+ls -Z /var/www/html/test.html
+
+13:
+chcon -t samba_share_t /var/www/html/test.html
+ls -Z /var/www/html/test.html
+
+14:
+браузер: http://127.0.0.1/test.html.
+
+15:
+ls -l /var/www/html/test.html
+tail /var/log/messages
+
+16:
+gedit /etc/httpd/httpd.conf (Listen 80 -> 81)
+
+17:
+sudo systemctl restart apache2
+sudo systemctl reload apache2
+sudo systemctl status apache2
+
+18:
+tail -nl /var/log/messages
+gedit /var/log/http/error_log
+gedit /var/log/http/access_log
+gedit /var/log/audit/audit.log
+
+19:
+semanage port -a -t http_port_t -р tcp 81
+semanage port -l | grep http_port_t
+
+20:
+sudo systemctl start apache2
+
+21:
+chcon -t httpd_sys_content_t /var/www/html/test.html
+браузер: http://127.0.0.1:81/test.html
+
+22:
+gedit /etc/httpd/httpd.conf (Listen 81 -> 80)
+
+23:
+semanage port -d -t http_port_t -p tcp 81
+
+24:
+sudo rm /var/www/html/test.html
